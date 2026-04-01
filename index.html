@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mergado Onboarding</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   KONFIGURÁCIA — vyplň po nahratí na GitHub (viď návod)
+   ============================================================ */
+:root {
+  --gh-owner:   'TVOJ_GITHUB_USERNAME';   /* napr. 'jnovak' */
+  --gh-repo:    'NAZOV_REPOZITARA';       /* napr. 'onboarding' */
+  --gh-branch:  'main';
+  --admin-pin:  '1234';
+}
+/* ============================================================ */
+
+:root {
+  --bg:#f6f5f2; --surface:#fff; --s2:#eeecea;
+  --b1:rgba(0,0,0,.08); --b2:rgba(0,0,0,.15);
+  --tx:#1a1a18; --tx2:#6b6b67; --tx3:#a09f99;
+  --ac:#1a8c5e; --acl:#e0f4ec; --acd:#0d6344;
+  --red:#c94d28; --redbg:#faeae4;
+  --warn:#a06b10; --warnbg:#fdf3e3;
+  --r:9px; --rl:13px;
+  --font:'DM Sans',sans-serif; --mono:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100vh;font-size:15px;line-height:1.6}
+.app{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:264px;min-width:264px;background:var(--surface);border-right:1px solid var(--b1);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sb-top{padding:1.125rem 1.25rem 1rem;border-bottom:1px solid var(--b1)}
+.logo-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.logo-img{width:26px;height:26px;object-fit:contain;flex-shrink:0}
+.logo-txt{font-size:12px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--tx)}
+.emp-lbl{font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--tx3);margin-bottom:3px}
+.emp-row{display:flex;align-items:center;gap:5px}
+.emp-name{font-size:13px;font-weight:500;color:var(--tx);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.emp-edit-btn{background:none;border:none;cursor:pointer;color:var(--tx3);padding:2px 5px;border-radius:5px;font-size:13px;line-height:1;transition:all .12s;display:none}
+.emp-edit-btn:hover{background:var(--s2);color:var(--tx2)}
+.emp-form{display:none;margin-top:8px}
+.emp-form input{width:100%;padding:6px 8px;border:1px solid var(--b2);border-radius:var(--r);font-family:var(--font);font-size:12px;color:var(--tx);background:var(--bg);outline:none;margin-bottom:6px}
+.emp-form input:focus{border-color:var(--ac)}
+.emp-form-btns{display:flex;gap:5px}
+
+.sb-prog{padding:.75rem 1.25rem;border-bottom:1px solid var(--b1)}
+.prog-row{display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);margin-bottom:5px}
+.prog-track{height:4px;background:var(--s2);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;background:var(--ac);border-radius:99px;transition:width .4s}
+
+.sb-nav{padding:.625rem .625rem;flex:1}
+.nav-lbl{font-size:10px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:var(--tx3);padding:0 6px;margin:6px 0 3px}
+.nv{display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--tx2);border:none;background:none;width:100%;text-align:left;transition:all .12s;font-family:var(--font)}
+.nv:hover{background:var(--s2);color:var(--tx)}
+.nv.on{background:var(--acl);color:var(--acd);font-weight:500}
+.ndot{width:7px;height:7px;border-radius:50%;background:rgba(0,0,0,.15);flex-shrink:0;transition:background .15s}
+.nv.on .ndot,.ndone .ndot{background:var(--ac)}
+.ncnt{margin-left:auto;font-size:11px;background:var(--s2);color:var(--tx3);padding:1px 6px;border-radius:99px}
+.nv.on .ncnt{background:rgba(26,140,94,.13);color:var(--acd)}
+
+.sb-foot{padding:.75rem 1.25rem;border-top:1px solid var(--b1)}
+.mode-btn{display:flex;align-items:center;justify-content:center;gap:5px;width:100%;padding:5px 10px;border-radius:99px;font-size:11px;font-weight:500;border:1px solid rgba(0,0,0,.15);background:none;font-family:var(--font);color:var(--tx2);cursor:pointer;transition:all .12s;margin-bottom:8px}
+.mode-btn:hover{background:var(--s2)}
+.mode-btn.adm{background:var(--warnbg);color:var(--warn);border-color:rgba(160,107,16,.25)}
+.sb-btn{width:100%;padding:7px 10px;border:1px solid rgba(0,0,0,.15);border-radius:var(--r);background:none;font-family:var(--font);font-size:12px;color:var(--tx2);cursor:pointer;transition:all .12s;margin-bottom:5px;text-align:left}
+.sb-btn:hover{background:var(--s2);color:var(--tx)}
+
+/* SAVE BUTTON */
+.save-bar{display:none;align-items:center;gap:8px;padding:8px 10px;margin-bottom:8px;background:var(--acl);border-radius:var(--r);border:1px solid rgba(26,140,94,.2)}
+.save-bar.show{display:flex}
+.save-bar-txt{font-size:12px;color:var(--acd);flex:1}
+.save-bar-btn{padding:5px 12px;border-radius:var(--r);font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font);border:none;background:var(--ac);color:#fff;transition:all .12s}
+.save-bar-btn:hover{background:var(--acd)}
+.save-bar-btn:disabled{opacity:.5;cursor:default}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto}
+.inner{max-width:760px;margin:0 auto;padding:1.75rem 2rem 3rem}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;padding-top:.5rem}
+.vtabs{display:flex;gap:3px;background:var(--s2);padding:3px;border-radius:8px}
+.vtab{padding:5px 13px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:none;font-family:var(--font);color:var(--tx2);transition:all .15s}
+.vtab.on{background:var(--surface);color:var(--tx);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.5rem}
+.stat{background:var(--surface);border:1px solid var(--b1);border-radius:var(--r);padding:.75rem 1rem}
+.sv{font-size:22px;font-weight:500}
+.sl{font-size:11px;color:var(--tx2);margin-top:1px}
+
+.ph-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1.25rem}
+.ph-num{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);margin-bottom:3px}
+.ph-title{font-size:21px;font-weight:500}
+.ph-desc{font-size:13px;color:var(--tx2);margin-top:3px}
+.sec-lbl{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);margin:1.25rem 0 .5rem}
+
+.tc{background:var(--surface);border:1px solid var(--b1);border-radius:var(--rl);padding:.875rem 1rem;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px;transition:border-color .15s}
+.tc:hover{border-color:var(--b2)}
+.tc.done{opacity:.5}
+.cb{width:18px;height:18px;border-radius:5px;border:1.5px solid rgba(0,0,0,.15);flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.tc.done .cb{background:var(--ac);border-color:var(--ac)}
+.cbx{display:none}
+.tc.done .cbx{display:block}
+.tb{flex:1;min-width:0}
+.tt{font-size:14px;font-weight:500}
+.tc.done .tt{text-decoration:line-through;color:var(--tx3)}
+.tdesc{margin-top:6px}
+.dl{display:flex;align-items:baseline;gap:5px;font-size:13px;color:var(--tx2);line-height:1.55}
+.dbull{color:var(--tx3);flex-shrink:0}
+.dp{font-size:13px;color:var(--tx2);line-height:1.55;margin-bottom:1px}
+.tm{display:flex;align-items:center;gap:6px;margin-top:7px;flex-wrap:wrap}
+.badge{font-size:11px;font-weight:500;padding:2px 8px;border-radius:99px}
+.bm{background:#e6f1fb;color:#185fa5}
+.bt{background:#eaf3de;color:#3b6d11}
+.br{background:#faeeda;color:#854f0b}
+.bs{background:#eeedfe;color:#3c3489}
+.ta{display:flex;gap:3px;flex-shrink:0}
+.ib{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;border:none;background:none;cursor:pointer;color:var(--tx3);transition:all .12s}
+.ib:hover{background:var(--s2);color:var(--tx2)}
+.ib.del:hover{background:var(--redbg);color:var(--red)}
+
+.lr{display:flex;align-items:center;gap:8px;background:var(--s2);border-radius:var(--r);padding:8px 11px;margin-bottom:5px;border:1px solid transparent;transition:border-color .12s}
+.lr:hover{border-color:var(--b2)}
+.ll{font-size:13px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lu{font-size:11px;color:var(--tx3);font-family:var(--mono);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lo{font-size:12px;color:var(--ac);text-decoration:none}
+.lo:hover{text-decoration:underline}
+
+.add-btn{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:var(--r);border:1px dashed rgba(0,0,0,.15);background:none;font-family:var(--font);font-size:13px;color:var(--tx2);cursor:pointer;transition:all .12s;width:100%}
+.add-btn:hover{background:var(--s2);border-style:solid;color:var(--tx)}
+
+.ed{background:var(--surface);border:1px solid var(--b2);border-radius:var(--rl);padding:1.125rem 1.25rem;margin-bottom:10px}
+.ed-hd{font-size:12px;font-weight:500;color:var(--tx2);margin-bottom:.875rem;padding-bottom:.625rem;border-bottom:1px solid var(--b1);display:flex;justify-content:space-between;align-items:center}
+.ed-x{background:none;border:none;cursor:pointer;color:var(--tx3);font-size:18px;line-height:1;padding:0 2px;font-family:var(--font)}
+.ed-x:hover{color:var(--tx)}
+.fr{margin-bottom:.625rem}
+.fl{font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--tx3);margin-bottom:3px;display:block}
+input[type=text],textarea,select{width:100%;padding:7px 9px;border:1px solid var(--b2);border-radius:var(--r);font-family:var(--font);font-size:13px;color:var(--tx);background:var(--bg);transition:border-color .12s;outline:none;line-height:1.5}
+input[type=text]:focus,textarea:focus,select:focus{border-color:var(--ac)}
+textarea{resize:vertical;min-height:90px}
+select{appearance:none}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ed-ft{display:flex;justify-content:flex-end;gap:7px;margin-top:.875rem}
+.btn{padding:6px 14px;border-radius:var(--r);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font);border:1px solid rgba(0,0,0,.15);background:none;color:var(--tx2);transition:all .12s}
+.btn:hover{background:var(--s2);color:var(--tx)}
+.btn.sv{background:var(--ac);border-color:var(--ac);color:#fff}
+.btn.sv:hover{background:var(--acd)}
+.btn.sm{padding:4px 11px;font-size:12px}
+
+.pnav{display:flex;justify-content:space-between;align-items:center;padding-top:1rem;border-top:1px solid var(--b1);margin-top:1rem}
+.pnbtn{padding:7px 16px;border-radius:var(--r);font-size:13px;font-weight:500;cursor:pointer;border:1px solid rgba(0,0,0,.15);background:none;font-family:var(--font);color:var(--tx);transition:all .12s}
+.pnbtn:hover{background:var(--s2)}
+.pnbtn:disabled{opacity:.3;cursor:default}
+.pnbtn.pri{background:var(--ac);color:#fff;border-color:var(--ac)}
+.pnbtn.pri:hover{background:var(--acd)}
+
+.mc{background:var(--surface);border:1px solid var(--b1);border-radius:var(--rl);padding:.875rem 1rem;margin-bottom:7px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color .15s}
+.mc:hover{border-color:var(--b2)}
+.mn{width:31px;height:31px;border-radius:50%;background:var(--acl);color:var(--acd);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0}
+.mb{flex:1}
+.mt{font-size:14px;font-weight:500}
+.mm{font-size:12px;color:var(--tx2);margin-top:1px}
+
+/* LOADING */
+.loading{display:flex;align-items:center;justify-content:center;height:60vh;flex-direction:column;gap:12px}
+.spinner{width:28px;height:28px;border:2px solid var(--b1);border-top-color:var(--ac);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-txt{font-size:13px;color:var(--tx3)}
+
+/* SETUP SCREEN */
+.setup-screen{max-width:520px;margin:3rem auto;padding:0 2rem}
+.setup-card{background:var(--surface);border:1px solid var(--b1);border-radius:var(--rl);padding:2rem}
+.setup-title{font-size:18px;font-weight:500;margin-bottom:.5rem}
+.setup-sub{font-size:13px;color:var(--tx2);margin-bottom:1.5rem;line-height:1.6}
+.setup-step{display:flex;gap:10px;margin-bottom:1rem;align-items:flex-start}
+.setup-step-num{width:22px;height:22px;border-radius:50%;background:var(--ac);color:#fff;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.setup-step-txt{font-size:13px;color:var(--tx2);line-height:1.6}
+.setup-step-txt code{font-family:var(--mono);font-size:12px;background:var(--s2);padding:1px 5px;border-radius:4px;color:var(--tx)}
+.setup-inputs{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--b1)}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;z-index:100}
+.modal{background:var(--surface);border-radius:var(--rl);padding:1.5rem 1.75rem;width:320px}
+.modal-title{font-size:16px;font-weight:500;margin-bottom:.375rem}
+.modal-sub{font-size:13px;color:var(--tx2);margin-bottom:1rem}
+.pin-in{width:100%;text-align:center;font-size:18px;font-weight:500;letter-spacing:.2em;padding:10px;border:1px solid var(--b2);border-radius:var(--r);font-family:var(--mono);background:var(--bg);color:var(--tx);outline:none;margin-bottom:.75rem}
+.pin-in:focus{border-color:var(--ac)}
+.pin-err{font-size:12px;color:var(--red);min-height:16px;margin-bottom:.625rem}
+.modal-ft{display:flex;gap:8px;justify-content:flex-end}
+
+/* GH TOKEN MODAL */
+.token-info{font-size:12px;color:var(--tx3);margin-top:.5rem;line-height:1.5}
+.token-info a{color:var(--ac)}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--tx);color:var(--bg);padding:9px 16px;border-radius:var(--r);font-size:13px;font-weight:500;opacity:0;transition:opacity .2s;pointer-events:none;z-index:200;max-width:300px}
+.toast.show{opacity:1}
+.toast.err{background:var(--red)}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- APP SHELL -->
+<div class="app" id="appShell" style="display:none">
+  <aside class="sidebar">
+    <div class="sb-top">
+      <div class="logo-row">
+        <img class="logo-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAABCGlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGA8wQAELAYMDLl5JUVB7k4KEZFRCuwPGBiBEAwSk4sLGHADoKpv1yBqL+viUYcLcKakFicD6Q9ArFIEtBxopAiQLZIOYWuA2EkQtg2IXV5SUAJkB4DYRSFBzkB2CpCtkY7ETkJiJxcUgdT3ANk2uTmlyQh3M/Ck5oUGA2kOIJZhKGYIYnBncAL5H6IkfxEDg8VXBgbmCQixpJkMDNtbGRgkbiHEVBYwMPC3MDBsO48QQ4RJQWJRIliIBYiZ0tIYGD4tZ2DgjWRgEL7AwMAVDQsIHG5TALvNnSEfCNMZchhSgSKeDHkMyQx6QJYRgwGDIYMZAKbWPz9HbOBQAAAEdklEQVR4nMWXX27iVhjFz3evTbjOqBvoSNVAputomWqgC4A3TJ7Cn26k65juoFKlTmZsV6OuAkYDD6lU5qmGQBTg+uuDDZiEP8ZAwquv7R/nnO/ca7yxXwMgQXjenxAEvKhU8evfbwvVCwBCPh+TlAScl+1vfv8k7kbT0i8XBfsi0Pw8TEKQ1qpiG5cNHo0EgW7/uy8284Xq62dgEhJBYJWrpl0PBj4IAgRBNPInxVbuqXWSkgJ9Xq4ataYe+iCAyAAQco38SamZB+C++ywkBZpPSyMEaW2VbaN2pYc+kQABgIguz3UqNfNPoZOQFARWuWpcXgXDIRFh/jaxXEQgolt/Ujw1k5QUaKtclbWGHgwQo1kFQqTT2J+UmhcF+zQZlxJaq0rVuGwEQ59WaQAYD28gEGjk3xebOTDc3zrHzJOQpBfahDQP/7BYcxuBiMb+pNjK/Vg9nncicsqoNYINNBuAYkw/t47UTwuapVPrH7gBCMuMl1q5Q5mWfdPQAx+babAmQ6tMAiFTHgT3Xao8CUlavyjbslafbdUmWr7jcQRBdOvfl5r5gv393jqJUJukNAmAYkzF5qv9vJs7lZwGOyyLMyHa74BkXSAkaa0qVVGrb5rw9fclAkJsb2nldndmOFOVqmk3eDAgEglp9gHCwrtJsZkrbOmnaGewZa0eDH086uLjAWG5txRb+fU6RU7ZxuUVR/vUfmWRLEOrTBSdVXLAahcIiUBbFduww9yIvbRJC4RYPzVzAEfnJwjS+rxsS7uuh37qr4ZUQDGm4vxMR9BWxTaqdR1OeApxDgJCvAsu5Gz6afxDpnY13WfCjw2EKE88nmbefCfHr/TdlAiH0BwExAAYlklOe+p0WdEfrCd4WYQep/brICAwlElOe+b1YJ1Jxjn3PwKgw5j27KEFDMMyye3M3F6QzQhmBjNMC32H/3kPaYUKpvjtrVDolDLJ6czcLquMZJ6/mxmmwr8OGHj5FvouhU77K7TQpssq1GblKsNU3Hdwk1KnPYAY4BVtHtGsMLm4+TMFU1KgxUy5He1toXnI9B5S7cWUOEMMZQq3M/W6nN1OE2f6Gs5dmCckidRuhRhgQIW5+cIqg900CybDQt/BzTVkNqFKCSxjKIPczszr6uwZBbzP4ETefcTNB0rm3Q6guTZTrxtkMzJNuTBgWvO5y+5k2gbEDGXA7WivizDFqcqOwZh3wW6dNgIxszLJ7QReV2czFBz0dR/1OPcd3sW0HogBZQqvM3NTO7X2oabivsM311u6YA1Q6JTX1k6XLZPSOrWOiBlmdnvGHwIx2DLJawduT6sMBcdBib9g4d31WibxYLEyhNueOb0gmxHHcWo901mYp8dzJ+LLLJPctnZ6gcoQ86l4AIABQ3H/Ax7pZCwWhF3sReeb07HEoAyL+y5A8bOKQOQUee2Z0z2lU+uZwh5fzp0BwDLpY2fq9cL2ezKaOZOpuO8QojOdkZHkdGbeF6gzenKaCCnMEwH49ifjr89Tr8fq7Om1WYUyLP7qEuN/FO+r792GFDwAAAAASUVORK5CYII=" alt="Mergado">
+        <span class="logo-txt">Mergado Onboarding</span>
+      </div>
+      <div>
+        <div class="emp-lbl">Zamestnanec</div>
+        <div class="emp-row">
+          <span class="emp-name" id="empName">—</span>
+          <button class="emp-edit-btn" id="empBtn" onclick="toggleEmpForm()" title="Upraviť meno">✎</button>
+        </div>
+        <div class="emp-form" id="empForm">
+          <input type="text" id="empInput" placeholder="Meno Příjmení">
+          <div class="emp-form-btns">
+            <button class="btn sm" onclick="cancelEmp()">Zrušiť</button>
+            <button class="btn sm sv" onclick="saveEmpName()">Uložiť</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sb-prog">
+      <div class="prog-row"><span>Postup</span><span id="progTxt">0 / 0</span></div>
+      <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    </div>
+
+    <nav class="sb-nav">
+      <div class="nav-lbl">Fázy</div>
+      <div id="navList"></div>
+      <div id="navManage"></div>
+    </nav>
+
+    <div class="sb-foot">
+      <!-- save bar — shown when there are unsaved changes -->
+      <div class="save-bar" id="saveBar">
+        <span class="save-bar-txt">Neuložené zmeny</span>
+        <button class="save-bar-btn" id="saveBtn" onclick="saveToGitHub()">Uložiť</button>
+      </div>
+
+      <button class="mode-btn" id="modeBtn" onclick="toggleMode()">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="4" r="2"/><path d="M2 11c0-2.2 1.8-4 4-4s4 1.8 4 4"/></svg>
+        <span id="modeTxt">Prihlásiť sa ako Admin</span>
+      </button>
+      <div id="adminFoot"></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="inner" id="content">
+      <div class="loading"><div class="spinner"></div><div class="loading-txt">Načítavam dáta...</div></div>
+    </div>
+  </main>
+</div>
+
+<!-- SETUP SCREEN — shown when GitHub not configured -->
+<div id="setupScreen" style="display:none">
+  <div class="setup-screen">
+    <div class="setup-card">
+      <div class="logo-row" style="margin-bottom:1.25rem">
+        <img style="width:22px;height:22px;object-fit:contain" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAABCGlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGA8wQAELAYMDLl5JUVB7k4KEZFRCuwPGBiBEAwSk4sLGHADoKpv1yBqL+viUYcLcKakFicD6Q9ArFIEtBxopAiQLZIOYWuA2EkQtg2IXV5SUAJkB4DYRSFBzkB2CpCtkY7ETkJiJxcUgdT3ANk2uTmlyQh3M/Ck5oUGA2kOIJZhKGYIYnBncAL5H6IkfxEDg8VXBgbmCQixpJkMDNtbGRgkbiHEVBYwMPC3MDBsO48QQ4RJQWJRIliIBYiZ0tIYGD4tZ2DgjWRgEL7AwMAVDQsIHG5TALvNnSEfCNMZchhSgSKeDHkMyQx6QJYRgwGDIYMZAKbWPz9HbOBQAAAEdklEQVR4nMWXX27iVhjFz3evTbjOqBvoSNVAputomWqgC4A3TJ7Cn26k65juoFKlTmZsV6OuAkYDD6lU5qmGQBTg+uuDDZiEP8ZAwquv7R/nnO/ca7yxXwMgQXjenxAEvKhU8evfbwvVCwBCPh+TlAScl+1vfv8k7kbT0i8XBfsi0Pw8TEKQ1qpiG5cNHo0EgW7/uy8284Xq62dgEhJBYJWrpl0PBj4IAgRBNPInxVbuqXWSkgJ9Xq4ataYe+iCAyAAQco38SamZB+C++ywkBZpPSyMEaW2VbaN2pYc+kQABgIguz3UqNfNPoZOQFARWuWpcXgXDIRFh/jaxXEQgolt/Ujw1k5QUaKtclbWGHgwQo1kFQqTT2J+UmhcF+zQZlxJaq0rVuGwEQ59WaQAYD28gEGjk3xebOTDc3zrHzJOQpBfahDQP/7BYcxuBiMb+pNjK/Vg9nncicsqoNYINNBuAYkw/t47UTwuapVPrH7gBCMuMl1q5Q5mWfdPQAx+babAmQ6tMAiFTHgT3Xao8CUlavyjbslafbdUmWr7jcQRBdOvfl5r5gv393jqJUJukNAmAYkzF5qv9vJs7lZwGOyyLMyHa74BkXSAkaa0qVVGrb5rw9fclAkJsb2nldndmOFOVqmk3eDAgEglp9gHCwrtJsZkrbOmnaGewZa0eDH086uLjAWG5txRb+fU6RU7ZxuUVR/vUfmWRLEOrTBSdVXLAahcIiUBbFduww9yIvbRJC4RYPzVzAEfnJwjS+rxsS7uuh37qr4ZUQDGm4vxMR9BWxTaqdR1OeApxDgJCvAsu5Gz6afxDpnY13WfCjw2EKE88nmbefCfHr/TdlAiH0BwExAAYlklOe+p0WdEfrCd4WYQep/brICAwlElOe+b1YJ1Jxjn3PwKgw5j27KEFDMMyye3M3F6QzQhmBjNMC32H/3kPaYUKpvjtrVDolDLJ6czcLquMZJ6/mxmmwr8OGHj5FvouhU77K7TQpssq1GblKsNU3Hdwk1KnPYAY4BVtHtGsMLm4+TMFU1KgxUy5He1toXnI9B5S7cWUOEMMZQq3M/W6nN1OE2f6Gs5dmCckidRuhRhgQIW5+cIqg900CybDQt/BzTVkNqFKCSxjKIPczszr6uwZBbzP4ETefcTNB0rm3Q6guTZTrxtkMzJNuTBgWvO5y+5k2gbEDGXA7WivizDFqcqOwZh3wW6dNgIxszLJ7QReV2czFBz0dR/1OPcd3sW0HogBZQqvM3NTO7X2oabivsM311u6YA1Q6JTX1k6XLZPSOrWOiBlmdnvGHwIx2DLJawduT6sMBcdBib9g4d31WibxYLEyhNueOb0gmxHHcWo901mYp8dzJ+LLLJPctnZ6gcoQ86l4AIABQ3H/Ax7pZCwWhF3sReeb07HEoAyL+y5A8bOKQOQUee2Z0z2lU+uZwh5fzp0BwDLpY2fq9cL2ezKaOZOpuO8QojOdkZHkdGbeF6gzenKaCCnMEwH49ifjr89Tr8fq7Om1WYUyLP7qEuN/FO+r792GFDwAAAAASUVORK5CYII=" alt="">
+        <span style="font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase">Mergado Onboarding</span>
+      </div>
+      <div class="setup-title">Admin nastavenie</div>
+      <div class="setup-sub">Zadaj GitHub token a PIN pre admin prístup. Toto nastavenie sa uloží len v <strong>tvojom</strong> prehliadači — nováčik nič vypĺňať nemusí.</div>
+
+      <div class="setup-step"><div class="setup-step-num">1</div><div class="setup-step-txt">Choď na <a href="https://github.com/settings/tokens" target="_blank" style="color:var(--ac)">github.com/settings/tokens</a></div></div>
+      <div class="setup-step"><div class="setup-step-num">2</div><div class="setup-step-txt">Klikni <strong>Generate new token (classic)</strong></div></div>
+      <div class="setup-step"><div class="setup-step-num">3</div><div class="setup-step-txt">Zaškrtni scope <code>repo</code> a vygeneruj token</div></div>
+      <div class="setup-step"><div class="setup-step-num">4</div><div class="setup-step-txt">Skopíruj token a vlož ho nižšie</div></div>
+
+      <div class="setup-inputs">
+        <div class="fr"><label class="fl">GitHub Personal Access Token</label><input type="text" id="cfg-token" placeholder="ghp_...">
+          <div class="token-info">Token sa uloží len v tvojom prehliadači. Nováčik ho nikdy nevidí ani nepotrebuje.</div>
+        </div>
+        <div class="fr"><label class="fl">Admin PIN (voliteľné, default 1234)</label><input type="text" id="cfg-pin" placeholder="napr. 1234" maxlength="8"></div>
+        <div class="ed-ft" style="margin-top:1rem">
+          <button class="btn" onclick="showApp()">Späť bez uloženia</button>
+          <button class="btn sv" onclick="saveConfig()">Uložiť token</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PIN MODAL -->
+<div class="modal-bg" id="pinModal" style="display:none">
+  <div class="modal">
+    <div class="modal-title" id="pinTitle">Zadaj admin PIN</div>
+    <div class="modal-sub" id="pinSub">Pre prístup k úpravám zadaj PIN.</div>
+    <input class="pin-in" type="password" id="pinIn" maxlength="8" placeholder="••••" autocomplete="off">
+    <div class="pin-err" id="pinErr"></div>
+    <div class="modal-ft">
+      <button class="btn" onclick="closePin()">Zrušiť</button>
+      <button class="btn sv" onclick="submitPin()">Potvrdiť</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   CONFIG — UPRAV TIETO DVE HODNOTY po nahrati na GitHub
+   ============================================================ */
+const GH_OWNER  = 'tomastruchlik';
+const GH_REPO   = 'Mergado-Onboarding';
+const GH_BRANCH = 'main';
+/* ============================================================ */
+
+const CFG_KEY  = 'mo_cfg_v1';
+const DATA_KEY = 'mo_checked_v1';
+
+let cfg = JSON.parse(localStorage.getItem(CFG_KEY) || '{}');
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let S = null;          // full data object loaded from GitHub
+let fileSha = null;    // GitHub file SHA needed for updates
+let admin = false;     // default = employee view
+let curP = 0;
+let view = 'check';
+let editT = null;
+let editL = null;
+let editPh = false;
+let dirty = false;     // unsaved changes flag
+let pinCb = null;
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+window.addEventListener('DOMContentLoaded', () => {
+  showApp();
+  loadData();
+});
+
+function showSetup() {
+  document.getElementById('setupScreen').style.display = 'block';
+  document.getElementById('appShell').style.display = 'none';
+}
+
+function showApp() {
+  document.getElementById('setupScreen').style.display = 'none';
+  document.getElementById('appShell').style.display = 'flex';
+}
+
+function saveConfig() {
+  const token = document.getElementById('cfg-token').value.trim();
+  const pin   = document.getElementById('cfg-pin').value.trim();
+  cfg = { token, pin: pin || '1234' };
+  localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+  showApp();
+  toast('Token uložený ✓');
+}
+
+/* ============================================================
+   GITHUB API
+   ============================================================ */
+function ghHeaders() {
+  const h = { 'Content-Type': 'application/json' };
+  if (cfg.token) h['Authorization'] = 'token ' + cfg.token;
+  return h;
+}
+
+function dataUrl() {
+  return `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/data.json`;
+}
+
+async function loadData() {
+  document.getElementById('content').innerHTML =
+    '<div class="loading"><div class="spinner"></div><div class="loading-txt">Načítavam dáta...</div></div>';
+  try {
+    const r = await fetch(dataUrl() + '?ref=' + GH_BRANCH + '&t=' + Date.now(), { headers: ghHeaders() });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const json = await r.json();
+    fileSha = json.sha;
+    S = JSON.parse(atob(json.content.replace(/\n/g,'')));
+
+    // merge locally saved checkbox state (employee ticks)
+    const localChecked = JSON.parse(localStorage.getItem(DATA_KEY) || '{}');
+    if (!S.checked) S.checked = {};
+    // local state wins for checkbox (employee can tick without token)
+    Object.assign(S.checked, localChecked);
+
+    render();
+  } catch(e) {
+    document.getElementById('content').innerHTML =
+      `<div class="loading"><div class="loading-txt" style="color:var(--red)">Chyba pri načítaní dát.<br><small>${e.message}</small><br><br>
+      <button class="btn" onclick="loadData()">Skúsiť znova</button></div></div>`;
+  }
+}
+
+async function saveToGitHub() {
+  if (!cfg.token) {
+    toast('Na ukladanie potrebuješ GitHub token. Obnov nastavenie.', true);
+    return;
+  }
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.textContent = 'Ukladám...';
+
+  try {
+    // Merge local checkbox state back into S before saving
+    const localChecked = JSON.parse(localStorage.getItem(DATA_KEY) || '{}');
+    if (!S.checked) S.checked = {};
+    Object.assign(S.checked, localChecked);
+
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(S, null, 2))));
+    const body = { message: 'Update onboarding data', content, branch: GH_BRANCH };
+    if (fileSha) body.sha = fileSha;
+
+    const r = await fetch(dataUrl(), {
+      method: 'PUT',
+      headers: ghHeaders(),
+      body: JSON.stringify(body)
+    });
+    if (!r.ok) {
+      const err = await r.json();
+      throw new Error(err.message || 'HTTP ' + r.status);
+    }
+    const json = await r.json();
+    fileSha = json.content.sha;
+    setDirty(false);
+    toast('Uložené na GitHub ✓');
+  } catch(e) {
+    toast('Chyba pri ukladaní: ' + e.message, true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Uložiť';
+  }
+}
+
+// Employee tick — saved to localStorage immediately (no token needed)
+// Also marks dirty so admin can do a full save later
+function saveCheckedLocal() {
+  localStorage.setItem(DATA_KEY, JSON.stringify(S.checked || {}));
+  // If admin is logged in, also push to GitHub automatically after a tick
+  if (admin && cfg.token) {
+    setDirty(true);
+  }
+}
+
+function setDirty(val) {
+  dirty = val;
+  document.getElementById('saveBar').classList.toggle('show', val && admin);
+}
+
+function resetCfg() {
+  localStorage.removeItem(CFG_KEY);
+  cfg = {};
+  toast('Token vymazaný');
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function uid() { return '_' + Math.random().toString(36).slice(2,9); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function toast(m, err=false) {
+  const t = document.getElementById('toast');
+  t.textContent = m;
+  t.className = 'toast' + (err ? ' err' : '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), err ? 4000 : 2500);
+}
+function totalT() { return (S?.phases||[]).reduce((s,p)=>s+p.tasks.length,0); }
+function doneT() { const ck=S?.checked||{}; return (S?.phases||[]).reduce((s,p)=>s+p.tasks.filter(t=>ck[t.id]).length,0); }
+function bCls(t) { return {meeting:'bm',task:'bt',read:'br',setup:'bs'}[t]||'bt'; }
+function bLbl(t) { return {meeting:'Stretnutie',task:'Úloha',read:'Čítanie',setup:'Nastavenie'}[t]||t; }
+
+function renderDesc(raw) {
+  if (!raw) return '';
+  return raw.split('\n').map(line => {
+    const tr = line.trimStart();
+    const indent = line.length - tr.length;
+    const pad = indent > 0 ? `padding-left:${Math.min(indent,8)*6}px` : '';
+    if (tr === '') return '<div style="height:3px"></div>';
+    if (tr.startsWith('- ')) return `<div class="dl" style="${pad}"><span class="dbull">•</span><span>${esc(tr.slice(2))}</span></div>`;
+    return `<div class="dp" style="${pad}">${esc(tr)}</div>`;
+  }).join('');
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+function updateSidebar() {
+  document.getElementById('empName').textContent = S?.emp || '—';
+  document.getElementById('empBtn').style.display = admin ? 'inline-block' : 'none';
+
+  const done=doneT(), total=totalT(), pct=total?Math.round(done/total*100):0;
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progTxt').textContent = done + ' / ' + total;
+
+  const mb = document.getElementById('modeBtn'), mt = document.getElementById('modeTxt');
+  if (admin) { mb.className='mode-btn adm'; mt.textContent='Režim: Admin'; }
+  else { mb.className='mode-btn'; mt.textContent='Prihlásiť sa ako Admin'; }
+
+  document.getElementById('saveBar').classList.toggle('show', dirty && admin);
+
+  const nl = document.getElementById('navList');
+  nl.innerHTML = '';
+  (S?.phases||[]).forEach((p,i) => {
+    const pd = p.tasks.every(t=>(S.checked||{})[t.id]);
+    const b = document.createElement('button');
+    b.className = 'nv' + (i===curP&&view==='check'?' on':'') + (pd?' ndone':'');
+    b.innerHTML = `<span class="ndot"></span>${esc(p.label)}<span class="ncnt">${p.tasks.length}</span>`;
+    b.onclick = () => { curP=i; view='check'; editT=null; editL=null; editPh=false; render(); };
+    nl.appendChild(b);
+  });
+
+  const nm = document.getElementById('navManage');
+  nm.innerHTML = admin ? `<button class="nv${view==='manage'?' on':''}" onclick="showManage()">
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="6.5" y1="1" x2="6.5" y2="12"/><line x1="1" y1="6.5" x2="12" y2="6.5"/></svg>
+    Správa fáz</button>` : '';
+
+  const af = document.getElementById('adminFoot');
+  af.innerHTML = admin ? `
+    <button class="sb-btn" onclick="showTokenSetup()">Zmeniť admin token</button>
+    <button class="sb-btn" onclick="resetCfg()">Odhlásiť token</button>` : '';
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function render() {
+  if (!S) return;
+  updateSidebar();
+  view === 'manage' ? renderManage() : renderCheck();
+}
+
+function renderCheck() {
+  const p = S.phases[curP]; if (!p) return;
+  const ck = S.checked || {};
+
+  let h = `<div class="topbar">
+    <div class="vtabs">
+      <button class="vtab on">Checklist</button>
+      ${admin ? `<button class="vtab" onclick="showManage()">Správa fáz</button>` : ''}
+    </div>
+    <div style="font-size:12px;color:var(--tx3)">${p.tasks.filter(t=>ck[t.id]).length} / ${p.tasks.length} úloh</div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="sv">${S.phases.length}</div><div class="sl">Fázy</div></div>
+    <div class="stat"><div class="sv">${totalT()}</div><div class="sl">Všetky úlohy</div></div>
+    <div class="stat"><div class="sv">${Math.round(doneT()/Math.max(totalT(),1)*100)}%</div><div class="sl">Hotovo</div></div>
+  </div>
+  <div class="ph-hd">
+    <div>
+      <div class="ph-num">Fáza ${curP+1} z ${S.phases.length} — ${esc(p.label)}</div>
+      <div class="ph-title">${esc(p.title)}</div>
+      ${p.desc ? `<div class="ph-desc">${esc(p.desc)}</div>` : ''}
+    </div>
+    ${admin ? `<button class="btn sm" style="margin-top:4px" onclick="editPh=true;render()">Upraviť fázu</button>` : ''}
+  </div>`;
+
+  if (admin && editPh) {
+    h += `<div class="ed">
+      <div class="ed-hd">Upraviť fázu <button class="ed-x" onclick="editPh=false;render()">×</button></div>
+      <div class="fr2">
+        <div class="fr"><label class="fl">Skratka</label><input type="text" id="pe-l" value="${esc(p.label)}"></div>
+        <div class="fr"><label class="fl">Názov</label><input type="text" id="pe-t" value="${esc(p.title)}"></div>
+      </div>
+      <div class="fr"><label class="fl">Popis</label><input type="text" id="pe-d" value="${esc(p.desc||'')}"></div>
+      <div class="ed-ft">
+        <button class="btn" onclick="editPh=false;render()">Zrušiť</button>
+        <button class="btn sv" onclick="savePh()">Uložiť</button>
+      </div>
+    </div>`;
+  }
+
+  h += `<div class="sec-lbl">Checklist</div>`;
+
+  p.tasks.forEach(task => {
+    const done = !!ck[task.id], isE = admin && editT === task.id;
+    h += `<div class="tc${done?' done':''}">
+      <div class="cb" onclick="toggleTask('${task.id}')">
+        <svg class="cbx" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="tb">
+        <div class="tt">${esc(task.title)}</div>
+        ${task.desc ? `<div class="tdesc">${renderDesc(task.desc)}</div>` : ''}
+        <div class="tm"><span class="badge ${bCls(task.type)}">${bLbl(task.type)}</span></div>
+      </div>
+      ${admin ? `<div class="ta">
+        <button class="ib" onclick="editT='${task.id}';editL=null;editPh=false;render()"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.5 1.5l2 2L4 11H2v-2L9.5 1.5z"/></svg></button>
+        <button class="ib del" onclick="delTask('${task.id}')"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="1" y1="1" x2="10" y2="10"/><line x1="10" y1="1" x2="1" y2="10"/></svg></button>
+      </div>` : ''}
+    </div>`;
+    if (isE) {
+      h += `<div class="ed">
+        <div class="ed-hd">Upraviť úlohu <button class="ed-x" onclick="editT=null;render()">×</button></div>
+        <div class="fr"><label class="fl">Názov</label><input type="text" id="te-t" value="${esc(task.title)}"></div>
+        <div class="fr"><label class="fl">Popis (- pre odrážku, medzery pre odsadenie)</label><textarea id="te-d" rows="9">${esc(task.desc||'')}</textarea></div>
+        <div class="fr"><label class="fl">Typ</label><select id="te-ty">${['task','meeting','read','setup'].map(v=>`<option value="${v}"${task.type===v?' selected':''}>${bLbl(v)}</option>`).join('')}</select></div>
+        <div class="ed-ft"><button class="btn" onclick="editT=null;render()">Zrušiť</button><button class="btn sv" onclick="saveTask('${task.id}')">Uložiť</button></div>
+      </div>`;
+    }
+  });
+
+  if (admin) {
+    if (editT === 'new') {
+      h += `<div class="ed">
+        <div class="ed-hd">Nová úloha <button class="ed-x" onclick="editT=null;render()">×</button></div>
+        <div class="fr"><label class="fl">Názov</label><input type="text" id="te-t" placeholder="Napr. Stretnutie s tímom"></div>
+        <div class="fr"><label class="fl">Popis (- pre odrážku, medzery pre odsadenie)</label><textarea id="te-d" rows="9" placeholder="Popis úlohy..."></textarea></div>
+        <div class="fr"><label class="fl">Typ</label><select id="te-ty"><option value="task">Úloha</option><option value="meeting">Stretnutie</option><option value="read">Čítanie</option><option value="setup">Nastavenie</option></select></div>
+        <div class="ed-ft"><button class="btn" onclick="editT=null;render()">Zrušiť</button><button class="btn sv" onclick="addTask()">Pridať</button></div>
+      </div>`;
+    } else {
+      h += `<button class="add-btn" onclick="editT='new';editL=null;editPh=false;render()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg>Pridať úlohu</button>`;
+    }
+  }
+
+  if (p.links.length || admin) {
+    h += `<div class="sec-lbl" style="margin-top:1.25rem">Samoštúdium & odkazy</div>`;
+    p.links.forEach(link => {
+      const isEL = admin && editL === link.id;
+      h += `<div class="lr">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="var(--tx3)" stroke-width="1.5"><path d="M5 8l4-4m0 0H5m4 0v4"/><rect x="1" y="1" width="11" height="11" rx="2"/></svg>
+        <span class="ll">${esc(link.label)}</span><span class="lu">${esc(link.url)}</span>
+        <a class="lo" href="${esc(link.url)}" target="_blank">Otvoriť ↗</a>
+        ${admin ? `<button class="ib" onclick="editL='${link.id}';editT=null;render()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8.5 1.5l2 2L3 11H1v-2L8.5 1.5z"/></svg></button>
+        <button class="ib del" onclick="delLink('${link.id}')"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="1" y1="1" x2="10" y2="10"/><line x1="10" y1="1" x2="1" y2="10"/></svg></button>` : ''}
+      </div>`;
+      if (isEL) {
+        h += `<div class="ed">
+          <div class="ed-hd">Upraviť odkaz <button class="ed-x" onclick="editL=null;render()">×</button></div>
+          <div class="fr"><label class="fl">Popis</label><input type="text" id="le-l" value="${esc(link.label)}"></div>
+          <div class="fr"><label class="fl">URL</label><input type="text" id="le-u" value="${esc(link.url)}"></div>
+          <div class="ed-ft"><button class="btn" onclick="editL=null;render()">Zrušiť</button><button class="btn sv" onclick="saveLink('${link.id}')">Uložiť</button></div>
+        </div>`;
+      }
+    });
+    if (admin) {
+      if (editL === 'new') {
+        h += `<div class="ed">
+          <div class="ed-hd">Nový odkaz <button class="ed-x" onclick="editL=null;render()">×</button></div>
+          <div class="fr"><label class="fl">Popis</label><input type="text" id="le-l" placeholder="Napr. Interná wiki"></div>
+          <div class="fr"><label class="fl">URL</label><input type="text" id="le-u" placeholder="https://..."></div>
+          <div class="ed-ft"><button class="btn" onclick="editL=null;render()">Zrušiť</button><button class="btn sv" onclick="addLink()">Pridať</button></div>
+        </div>`;
+      } else {
+        h += `<button class="add-btn" style="margin-top:6px" onclick="editL='new';editT=null;render()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg>Pridať odkaz</button>`;
+      }
+    }
+  }
+
+  h += `<div class="pnav">
+    <button class="pnbtn" onclick="prevP()" ${curP===0?'disabled':''}>← Predošlá</button>
+    <span style="font-size:12px;color:var(--tx3)">${curP+1} / ${S.phases.length}</span>
+    <button class="pnbtn pri" onclick="nextP()" ${curP===S.phases.length-1?'disabled':''}>Ďalšia →</button>
+  </div><div style="height:2rem"></div>`;
+
+  document.getElementById('content').innerHTML = h;
+}
+
+function renderManage() {
+  let h = `<div class="topbar"><div class="vtabs"><button class="vtab" onclick="view='check';render()">Checklist</button><button class="vtab on">Správa fáz</button></div></div>
+  <div style="margin-bottom:1.25rem"><div class="ph-title">Správa fáz</div><div class="ph-desc">Pridaj, uprav alebo zmaž fázy onboardingu</div></div>`;
+  S.phases.forEach((p,i) => {
+    h += `<div class="mc" onclick="curP=${i};view='check';render()">
+      <div class="mn">${i+1}</div>
+      <div class="mb"><div class="mt">${esc(p.label)} — ${esc(p.title)}</div><div class="mm">${p.tasks.length} úloh · ${p.links.length} odkazov</div></div>
+      <div style="display:flex;gap:3px" onclick="event.stopPropagation()">
+        <button class="ib" onclick="moveP(${i},-1)" ${i===0?'disabled':''}><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,7 5.5,3 10,7"/></svg></button>
+        <button class="ib" onclick="moveP(${i},1)" ${i===S.phases.length-1?'disabled':''}><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,4 5.5,8 10,4"/></svg></button>
+        <button class="ib del" onclick="delP(${i})"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="1" y1="1" x2="9" y2="9"/><line x1="9" y1="1" x2="1" y2="9"/></svg></button>
+      </div>
+    </div>`;
+  });
+  h += `<div class="ed" style="margin-top:.75rem">
+    <div class="ed-hd">Nová fáza</div>
+    <div class="fr2"><div class="fr"><label class="fl">Skratka</label><input type="text" id="np-l" placeholder="Deň 4"></div><div class="fr"><label class="fl">Názov</label><input type="text" id="np-t" placeholder="Hlboké intro"></div></div>
+    <div class="fr"><label class="fl">Popis</label><input type="text" id="np-d" placeholder="Krátky popis fázy"></div>
+    <div class="ed-ft"><button class="btn sv" onclick="addP()">Pridať fázu</button></div>
+  </div><div style="height:2rem"></div>`;
+  document.getElementById('content').innerHTML = h;
+}
+
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+function toggleTask(id) {
+  if (!S.checked) S.checked = {};
+  S.checked[id] = !S.checked[id];
+  saveCheckedLocal();
+  render();
+}
+
+function saveTask(id) {
+  const p=S.phases[curP], t=p.tasks.find(x=>x.id===id); if(!t) return;
+  t.title = document.getElementById('te-t').value.trim() || t.title;
+  t.desc  = document.getElementById('te-d').value;
+  t.type  = document.getElementById('te-ty').value;
+  editT=null; setDirty(true); render(); toast('Uložené lokálne — klikni Uložiť na GitHub');
+}
+function addTask() {
+  const tt = document.getElementById('te-t').value.trim(); if(!tt) return;
+  S.phases[curP].tasks.push({id:uid(),title:tt,desc:document.getElementById('te-d').value,type:document.getElementById('te-ty').value});
+  editT=null; setDirty(true); render(); toast('Pridané — klikni Uložiť na GitHub');
+}
+function delTask(id) {
+  if(!confirm('Zmazať úlohu?')) return;
+  const p=S.phases[curP];
+  p.tasks=p.tasks.filter(t=>t.id!==id);
+  delete (S.checked||{})[id];
+  setDirty(true); render(); toast('Zmazané — klikni Uložiť na GitHub');
+}
+function saveLink(id) {
+  const p=S.phases[curP], l=p.links.find(x=>x.id===id); if(!l) return;
+  l.label=document.getElementById('le-l').value.trim()||l.label;
+  l.url=document.getElementById('le-u').value.trim()||l.url;
+  editL=null; setDirty(true); render();
+}
+function addLink() {
+  const lb=document.getElementById('le-l').value.trim(), url=document.getElementById('le-u').value.trim();
+  if(!lb||!url) return;
+  S.phases[curP].links.push({id:uid(),label:lb,url});
+  editL=null; setDirty(true); render();
+}
+function delLink(id) {
+  S.phases[curP].links=S.phases[curP].links.filter(l=>l.id!==id);
+  setDirty(true); render();
+}
+function savePh() {
+  const p=S.phases[curP];
+  p.label=document.getElementById('pe-l').value.trim()||p.label;
+  p.title=document.getElementById('pe-t').value.trim()||p.title;
+  p.desc=document.getElementById('pe-d').value.trim();
+  editPh=false; setDirty(true); render();
+}
+function addP() {
+  const l=document.getElementById('np-l').value.trim(), t=document.getElementById('np-t').value.trim();
+  if(!l||!t) return;
+  S.phases.push({id:uid(),label:l,title:t,desc:document.getElementById('np-d').value.trim(),tasks:[],links:[]});
+  setDirty(true); render(); toast('Fáza pridaná — klikni Uložiť na GitHub');
+}
+function delP(i) {
+  if(!confirm('Zmazať fázu?')) return;
+  S.phases.splice(i,1);
+  if(curP>=S.phases.length) curP=Math.max(0,S.phases.length-1);
+  setDirty(true); render();
+}
+function moveP(i,d) {
+  const j=i+d; if(j<0||j>=S.phases.length) return;
+  [S.phases[i],S.phases[j]]=[S.phases[j],S.phases[i]];
+  if(curP===i) curP=j; else if(curP===j) curP=i;
+  setDirty(true); render();
+}
+function prevP() { if(curP>0){curP--;editT=null;editL=null;editPh=false;render();} }
+function nextP() { if(curP<S.phases.length-1){curP++;editT=null;editL=null;editPh=false;render();} }
+function showManage() { view='manage';editT=null;editL=null;editPh=false;render(); }
+
+/* ============================================================
+   EMPLOYEE NAME
+   ============================================================ */
+function toggleEmpForm() {
+  if(!admin) return;
+  const f=document.getElementById('empForm');
+  if(f.style.display==='block'){f.style.display='none';return;}
+  document.getElementById('empInput').value=S.emp||'';
+  f.style.display='block';
+  document.getElementById('empInput').focus();
+  document.getElementById('empInput').select();
+}
+function cancelEmp() { document.getElementById('empForm').style.display='none'; }
+function saveEmpName() {
+  const v=document.getElementById('empInput').value.trim();
+  if(v){ S.emp=v; document.getElementById('empName').textContent=v; }
+  document.getElementById('empForm').style.display='none';
+  setDirty(true); toast('Meno uložené — klikni Uložiť na GitHub');
+}
+
+/* ============================================================
+   MODE / PIN
+   ============================================================ */
+function toggleMode() {
+  if(admin) {
+    admin=false;
+    if(view==='manage') view='check';
+    editT=null; editL=null; editPh=false;
+    setDirty(false);
+    render(); toast('Prepnuté na zobrazenie nováčika');
+  } else {
+    pinCb = () => { admin=true; render(); toast('Vitaj, admin!'); };
+    openPin('Zadaj admin PIN', 'Pre prístup k úpravám zadaj PIN.', false);
+  }
+}
+
+function openPin(title, sub, isSet) {
+  document.getElementById('pinTitle').textContent=title;
+  document.getElementById('pinSub').textContent=sub;
+  document.getElementById('pinIn').value='';
+  document.getElementById('pinErr').textContent='';
+  document.getElementById('pinModal').dataset.set=isSet?'1':'0';
+  document.getElementById('pinModal').style.display='flex';
+  setTimeout(()=>document.getElementById('pinIn').focus(),50);
+}
+function closePin() { document.getElementById('pinModal').style.display='none'; pinCb=null; }
+function submitPin() {
+  const val=document.getElementById('pinIn').value;
+  const isSet=document.getElementById('pinModal').dataset.set==='1';
+  const storedPin = cfg?.pin || '1234';  // admin sets this via token setup
+  if(isSet) {
+    if(val.length<4){document.getElementById('pinErr').textContent='Min. 4 znaky.';return;}
+    cfg.pin=val; localStorage.setItem(CFG_KEY,JSON.stringify(cfg));
+    toast('PIN zmenený'); closePin();
+  } else {
+    if(val===storedPin){pinCb&&pinCb();closePin();}
+    else{document.getElementById('pinErr').textContent='Nesprávny PIN.';document.getElementById('pinIn').value='';document.getElementById('pinIn').focus();}
+  }
+}
+document.addEventListener('keydown', e => {
+  if(document.getElementById('pinModal').style.display==='flex'){
+    if(e.key==='Enter') submitPin();
+    if(e.key==='Escape') closePin();
+  }
+});
+
+function showTokenSetup() {
+  document.getElementById('setupScreen').style.display = 'block';
+  document.getElementById('appShell').style.display = 'none';
+  if (cfg.token) document.getElementById('cfg-token').value = cfg.token;
+  if (cfg.pin)   document.getElementById('cfg-pin').value = cfg.pin;
+}
+</script>
+</body>
+</html>
