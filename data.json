@@ -1,0 +1,91 @@
+{
+  "emp": "Meno Příjmení",
+  "phases": [
+    {
+      "id": "p1",
+      "label": "Deň 1",
+      "title": "Prvý deň",
+      "desc": "Uvítanie, prístupy a prvá orientácia",
+      "tasks": [
+        {
+          "id": "t1",
+          "title": "Zřízení základních přístupů",
+          "desc": "Potřebné přístupy a nastavení pro:\n- Profitak ID a přihlášení do IS (is.profitak.com)\n- Prohlídka IS: smlouvy, mzdy, absence, rezervace místností, inventář\n- Nastavení Rocket.Chat (r.profitak.com) — primární komunikační kanál skupiny\n  - přidání do potřebných skupin\n- Nastavení Discourse (c.profitak.com) — sdílení informací, wiki, diskuse\n  - vytvoření účtu v klubovně\n- Nastavení Nextcloud (n.profitak.com) — sdílení souborů\n- Zřízení firemního e-mailu — ověření jak se zobrazuje jméno odesílatele (formát: Jméno Příjmení - PROFITAK)\n- Přihlášení do firemního Google účtu\n- Přihlásit do Dropboxu",
+          "type": "setup"
+        },
+        {
+          "id": "t2",
+          "title": "Uvítanie s HR",
+          "desc": "Podpis dokumentov, pracovná zmluva, BOZP školenie.",
+          "type": "meeting"
+        },
+        {
+          "id": "t3",
+          "title": "Prevzatie notebooku & zariadení",
+          "desc": "Skontroluj správnosť vybavenia a nahlásiť problémy IT.",
+          "type": "task"
+        }
+      ],
+      "links": [
+        { "id": "l1", "label": "Interná wiki – Začíname", "url": "https://example.com" }
+      ]
+    },
+    {
+      "id": "p2",
+      "label": "Deň 2",
+      "title": "Zoznámenie s tímom",
+      "desc": "Meet & greet, intro do projektov",
+      "tasks": [
+        {
+          "id": "t4",
+          "title": "Tímový standup",
+          "desc": "Prvý spoločný standup — predstav sa v 2 vetách.",
+          "type": "meeting"
+        },
+        {
+          "id": "t5",
+          "title": "1:1 s manažérom",
+          "desc": "Očakávania, ciele na prvý mesiac, otvorené otázky.",
+          "type": "meeting"
+        },
+        {
+          "id": "t6",
+          "title": "Prečítaj si onboarding doc",
+          "desc": "Detailný popis procesov, kultúry a komunikácie.",
+          "type": "read"
+        }
+      ],
+      "links": []
+    },
+    {
+      "id": "p3",
+      "label": "Deň 3",
+      "title": "Hĺbkové intro",
+      "desc": "Architektúra, kód, procesy",
+      "tasks": [
+        {
+          "id": "t7",
+          "title": "Intro do architektúry produktu",
+          "desc": "Session s tech leadom — prehľad stacku a hlavných komponentov.",
+          "type": "meeting"
+        },
+        {
+          "id": "t8",
+          "title": "Spusti lokálne prostredie",
+          "desc": "Nastav si dev env podľa inštrukcie v SETUP.md.",
+          "type": "setup"
+        },
+        {
+          "id": "t9",
+          "title": "Prvý PR (malý fix alebo typo)",
+          "desc": "Zoznám sa s code review procesom.",
+          "type": "task"
+        }
+      ],
+      "links": [
+        { "id": "l2", "label": "SETUP.md – lokálne prostredie", "url": "https://example.com" }
+      ]
+    }
+  ],
+  "checked": {}
+}
