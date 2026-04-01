@@ -323,11 +323,6 @@ const CFG_KEY  = 'mo_cfg_v1';
 const DATA_KEY = 'mo_checked_v1';
 
 let cfg = JSON.parse(localStorage.getItem(CFG_KEY) || '{}');
-// DOČASNE: vlož nový token sem
-if (!cfg.token) {
-  cfg = { token: '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', pin: '1234' };
-  localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
-}
 
 /* ============================================================
    STATE
