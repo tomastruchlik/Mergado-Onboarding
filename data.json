@@ -1,11 +1,11 @@
 {
-  "emp": "Meno PÅÃ­jmenÃ­",
+  "emp": "Meno PÃÂÃÂ­jmenÃÂ­",
   "phases": [
     {
       "id": "_qx5bqgp",
       "label": "Den 1",
-      "title": "První den",
-      "desc": "Prvotní orientace, obeznámení s firmou, podpis dokumentů na HR, základní přístupy",
+      "title": "PrvnÃ­ den",
+      "desc": "PrvotnÃ­ orientace, obeznÃ¡menÃ­ s firmou, podpis dokumentÅ¯ na HR, zÃ¡kladnÃ­ pÅÃ­stupy",
       "tasks": [
         {
           "id": "_wy2svyt",
@@ -21,20 +21,20 @@
         },
         {
           "id": "_5ocld2u",
-          "title": "Uvítání ředitelem týmu a představení přítomným členům skupiny",
-          "desc": "Nový zaměstnanec bude oficiálně představen v rámci týmu a pracovní skupiny",
+          "title": "UvÃ­tÃ¡nÃ­ Åeditelem tÃ½mu a pÅedstavenÃ­ pÅÃ­tomnÃ½m ÄlenÅ¯m skupiny",
+          "desc": "NovÃ½ zamÄstnanec bude oficiÃ¡lnÄ pÅedstaven v rÃ¡mci tÃ½mu a pracovnÃ­ skupiny",
           "type": "meeting"
         },
         {
           "id": "_0oj13ug",
-          "title": "Předání pracovního místa a převzetí pracovních nástrojů (hardware)",
-          "desc": "Převzetí:\n• notebook\n• monitor\n• myš\n• klávesnice\n",
+          "title": "PÅedÃ¡nÃ­ pracovnÃ­ho mÃ­sta a pÅevzetÃ­ pracovnÃ­ch nÃ¡strojÅ¯ (hardware)",
+          "desc": "PÅevzetÃ­:\nâ¢ notebook\nâ¢ monitor\nâ¢ myÅ¡\nâ¢ klÃ¡vesnice\n",
           "type": "task"
         },
         {
           "id": "_sx1wq53",
-          "title": "Zřízení základních přístupů",
-          "desc": "Potřebné přístupy a nastavení pro: \n  - Profitak ID a přihlášení do IS (is.profitak.com)\n  - Prohlídka IS: smlouvy, mzdy, absence, rezervace místností, inventář\n  - Nastavení Rocket.Chat (r.profitak.com) — primární komunikační kanál skupiny \n                 - přidání do potřebních skupin\n  - Nastavení Discourse (c.profitak.com) — sdílení informací, wiki, diskuse\n                 - vytvoření účtu v klubovně\n  - Nastavení Nextcloud (n.profitak.com) — sdílení souborů\n  - Zřízení firemního e-mailu — ověření jak se zobrazuje jméno odesílatele (formát: Jméno Příjmení - PROFITAK)\n   - Přihlášení do firemního Google účtu\n   - Přihlásit do Dropboxu https://www.dropbox.com/home/xmls",
+          "title": "ZÅÃ­zenÃ­ zÃ¡kladnÃ­ch pÅÃ­stupÅ¯",
+          "desc": "PotÅebnÃ© pÅÃ­stupy a nastavenÃ­ pro: \n  - Profitak ID a pÅihlÃ¡Å¡enÃ­ do IS (is.profitak.com)\n  - ProhlÃ­dka IS: smlouvy, mzdy, absence, rezervace mÃ­stnostÃ­, inventÃ¡Å\n  - NastavenÃ­ Rocket.Chat (r.profitak.com) â primÃ¡rnÃ­ komunikaÄnÃ­ kanÃ¡l skupiny \n                 - pÅidÃ¡nÃ­ do potÅebnÃ­ch skupin\n  - NastavenÃ­ Discourse (c.profitak.com) â sdÃ­lenÃ­ informacÃ­, wiki, diskuse\n                 - vytvoÅenÃ­ ÃºÄtu v klubovnÄ\n  - NastavenÃ­ Nextcloud (n.profitak.com) â sdÃ­lenÃ­ souborÅ¯\n  - ZÅÃ­zenÃ­ firemnÃ­ho e-mailu â ovÄÅenÃ­ jak se zobrazuje jmÃ©no odesÃ­latele (formÃ¡t: JmÃ©no PÅÃ­jmenÃ­ - PROFITAK)\n   - PÅihlÃ¡Å¡enÃ­ do firemnÃ­ho Google ÃºÄtu\n   - PÅihlÃ¡sit do Dropboxu https://www.dropbox.com/home/xmls",
           "type": "setup"
         }
       ],
