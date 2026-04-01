@@ -398,8 +398,13 @@ async function loadData() {
 
     render();
   } catch(e) {
+    const setupHint = (!cfg.token || GH_OWNER === 'TVOJ_GITHUB_USERNAME' || GH_REPO === 'NAZOV_REPOZITARA')
+      ? 'Skontroluj nastavenie tokenu a GitHub repo konfiguráciu.'
+      : 'Skontroluj, či owner/repo/branch aj súbor data.json existujú.';
     document.getElementById('content').innerHTML =
       `<div class="loading"><div class="loading-txt" style="color:var(--red)">Chyba pri načítaní dát.<br><small>${e.message}</small><br><br>
+      <small style="color:var(--tx2)">${setupHint}</small><br><br>
+      <button class="btn" onclick="showTokenSetup()">Nastaviť / zmeniť token</button>
       <button class="btn" onclick="loadData()">Skúsiť znova</button></div></div>`;
   }
 }
